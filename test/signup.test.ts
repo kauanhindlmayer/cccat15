@@ -1,3 +1,4 @@
+import { getAccount } from "../src/getAccount";
 import { signup } from "../src/signup";
 
 test("should create a new driver account", async () => {
@@ -10,6 +11,17 @@ test("should create a new driver account", async () => {
   };
   const result = await signup(input);
   expect(result.accountId).toBeDefined();
+
+  const account = await getAccount(result.accountId);
+  expect(account).toEqual({
+    account_id: result.accountId,
+    name: input.name,
+    email: input.email,
+    cpf: input.cpf,
+    car_plate: input.carPlate,
+    is_passenger: false,
+    is_driver: true,
+  });
 });
 
 test("should create a new passenger account", async () => {
