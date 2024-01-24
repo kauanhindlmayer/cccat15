@@ -1,4 +1,4 @@
-export function validateCpf(cpf: string) {
+export function validateCpf(cpf: string): boolean {
   if (!cpf) return false;
   cpf = removeNonDigits(cpf);
   if (isInvalidLength(cpf)) return false;

@@ -1,4 +1,4 @@
-import { validateEmail } from "../src/validateEmail";
+import { validateEmail } from "../src/utils";
 
 test.each([
   "user@example.com",
