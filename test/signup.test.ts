@@ -1,5 +1,15 @@
-import { getAccount } from "../src/getAccount";
-import { signup } from "../src/signup";
+import GetAccount from "../src/GetAccount";
+import Signup from "../src/Signup";
+import AccountDAO from "../src/AccountDAO";
+
+let signup: Signup;
+let getAccount: GetAccount;
+
+beforeEach(() => {
+  const accountDAO = new AccountDAO();
+  signup = new Signup(accountDAO);
+  getAccount = new GetAccount(accountDAO);
+});
 
 test("should create a new driver account", async () => {
   const input = {
@@ -9,19 +19,16 @@ test("should create a new driver account", async () => {
     carPlate: "ABC1234",
     isDriver: true,
   };
-  const result = await signup(input);
+  const result = await signup.execute(input);
   expect(result.accountId).toBeDefined();
 
-  const account = await getAccount(result.accountId);
-  expect(account).toEqual({
-    account_id: result.accountId,
-    name: input.name,
-    email: input.email,
-    cpf: input.cpf,
-    car_plate: input.carPlate,
-    is_passenger: false,
-    is_driver: true,
-  });
+  const account = await getAccount.execute(result.accountId);
+  expect(account.name).toBe(input.name);
+  expect(account.email).toBe(input.email);
+  expect(account.cpf).toBe(input.cpf);
+  expect(account.is_driver).toBe(true);
+  expect(account.car_plate).toBe(input.carPlate);
+  expect(account.is_passenger).toBe(false);
 });
 
 test("should create a new passenger account", async () => {
@@ -31,8 +38,16 @@ test("should create a new passenger account", async () => {
     cpf: "968.896.412-30",
     isPassenger: true,
   };
-  const result = await signup(input);
+  const result = await signup.execute(input);
   expect(result.accountId).toBeDefined();
+
+  const account = await getAccount.execute(result.accountId);
+  expect(account.name).toBe(input.name);
+  expect(account.email).toBe(input.email);
+  expect(account.cpf).toBe(input.cpf);
+  expect(account.is_passenger).toBe(true);
+  expect(account.is_driver).toBe(false);
+  expect(account.car_plate).toBeNull();
 });
 
 test("should throw an error if email is already in use", async () => {
@@ -42,7 +57,9 @@ test("should throw an error if email is already in use", async () => {
     cpf: "968.896.412-30",
     isPassenger: true,
   };
-  await expect(() => signup(input)).rejects.toThrow("Email already in use");
+  await expect(() => signup.execute(input)).rejects.toThrow(
+    "Email already in use"
+  );
 });
 
 test("should throw an error if name is invalid", async () => {
@@ -52,7 +69,7 @@ test("should throw an error if name is invalid", async () => {
     cpf: "968.896.412-30",
     isPassenger: true,
   };
-  await expect(() => signup(input)).rejects.toThrow("Invalid name");
+  await expect(() => signup.execute(input)).rejects.toThrow("Invalid name");
 });
 
 test("should throw an error if email is invalid", async () => {
@@ -62,7 +79,7 @@ test("should throw an error if email is invalid", async () => {
     cpf: "968.896.412-30",
     isPassenger: true,
   };
-  await expect(() => signup(input)).rejects.toThrow("Invalid email");
+  await expect(() => signup.execute(input)).rejects.toThrow("Invalid email");
 });
 
 test("should throw an error if cpf is invalid", async () => {
@@ -72,7 +89,7 @@ test("should throw an error if cpf is invalid", async () => {
     cpf: "968.896.412-31",
     isPassenger: true,
   };
-  await expect(() => signup(input)).rejects.toThrow("Invalid cpf");
+  await expect(() => signup.execute(input)).rejects.toThrow("Invalid cpf");
 });
 
 test("should throw an error if car plate is invalid", async () => {
@@ -83,5 +100,7 @@ test("should throw an error if car plate is invalid", async () => {
     carPlate: "ABC123",
     isDriver: true,
   };
-  await expect(() => signup(input)).rejects.toThrow("Invalid car plate");
+  await expect(() => signup.execute(input)).rejects.toThrow(
+    "Invalid car plate"
+  );
 });

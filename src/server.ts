@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
-import { signup } from "./signup";
-import { getAccount } from "./getAccount";
+import Signup from "./Signup";
+import GetAccount from "./GetAccount";
+import AccountDAO from "./AccountDAO";
 
 const app = express();
 const port = 5000;
@@ -9,7 +10,9 @@ app.use(express.json());
 
 app.get("/account/:accountId", async (req: Request, res: Response) => {
   try {
-    const result = await getAccount(req.params.accountId);
+    const accountDAO = new AccountDAO();
+    const getAccount = new GetAccount(accountDAO);
+    const result = await getAccount.execute(req.params.accountId);
     res.status(200).send(result);
   } catch (e: any) {
     res.status(400).send({ message: e.message });
@@ -18,7 +21,9 @@ app.get("/account/:accountId", async (req: Request, res: Response) => {
 
 app.post("/signup", async (req: Request, res: Response) => {
   try {
-    const result = await signup(req.body);
+    const accountDAO = new AccountDAO();
+    const signup = new Signup(accountDAO);
+    const result = await signup.execute(req.body);
     res.status(201).send(result);
   } catch (e: any) {
     res.status(400).send({ message: e.message });

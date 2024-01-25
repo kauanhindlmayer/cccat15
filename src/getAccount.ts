@@ -1,15 +1,10 @@
-import pgp from "pg-promise";
+import AccountDAO from "./AccountDAO";
 
-export async function getAccount(accountId: string) {
-  const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
-  try {
-    const [account] = await connection.query(
-      "select * from cccat15.account where account_id = $1",
-      [accountId]
-    );
-    if (!account) throw new Error("Account not found");
+export default class GetAccount {
+  constructor(readonly accountDAO: AccountDAO) {}
+
+  async execute(accountId: string) {
+    const account = await this.accountDAO.getById(accountId);
     return account;
-  } finally {
-    await connection.$pool.end();
   }
 }

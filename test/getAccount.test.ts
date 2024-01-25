@@ -1,6 +1,16 @@
-import { signup } from "../src/signup";
-import { getAccount } from "../src/getAccount";
+import Signup from "../src/Signup";
+import GetAccount from "../src/GetAccount";
+import AccountDAO from "../src/AccountDAO";
 import crypto from "crypto";
+
+let signup: Signup;
+let getAccount: GetAccount;
+
+beforeEach(() => {
+  const accountDAO = new AccountDAO();
+  signup = new Signup(accountDAO);
+  getAccount = new GetAccount(accountDAO);
+});
 
 test("should get an account by id if it exists", async () => {
   const input = {
@@ -9,22 +19,21 @@ test("should get an account by id if it exists", async () => {
     cpf: "968.896.412-30",
     isPassenger: true,
   };
-  const { accountId } = await signup(input);
-  const account = await getAccount(accountId);
-  expect(account).toEqual({
-    account_id: accountId,
-    name: input.name,
-    email: input.email,
-    cpf: input.cpf,
-    car_plate: null,
-    is_passenger: true,
-    is_driver: false,
-  });
+  const { accountId } = await signup.execute(input);
+  const account = await getAccount.execute(accountId);
+  console.log(account);
+  expect(account).toBeDefined();
+  expect(account.id).toBe(accountId);
+  expect(account.name).toBe(input.name);
+  expect(account.email).toBe(input.email);
+  expect(account.cpf).toBe(input.cpf);
+  expect(account.is_passenger).toBe(true);
+  expect(account.is_driver).toBe(false);
+  expect(account.car_plate).toBeNull();
 });
 
-test("should throw an error if account does not exist", async () => {
+test("should return undefined if account does not exist", async () => {
   const invalidId = crypto.randomUUID();
-  await expect(() => getAccount(invalidId)).rejects.toThrow(
-    "Account not found"
-  );
+  const account = await getAccount.execute(invalidId);
+  expect(account).toBeUndefined();
 });
