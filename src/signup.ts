@@ -8,7 +8,7 @@ import {
 import IAccountDAO from "./AccountDAO";
 
 interface SignupInput {
-  id?: string;
+  accountId?: string;
   name: string;
   email: string;
   cpf: string;
@@ -26,7 +26,7 @@ export default class Signup {
   constructor(readonly accountDAO: IAccountDAO) {}
 
   async execute(input: SignupInput): Promise<SignupOutput> {
-    input.id = crypto.randomUUID();
+    input.accountId = crypto.randomUUID();
     const existingAccount = await this.accountDAO.getByEmail(input.email);
     if (existingAccount) throw new Error("Email already in use");
     if (!validateName(input.name)) throw new Error("Invalid name");
@@ -34,9 +34,9 @@ export default class Signup {
     if (!validateCpf(input.cpf)) throw new Error("Invalid cpf");
     if (input.isDriver && !validateCarPlate(input.carPlate!))
       throw new Error("Invalid car plate");
-    this.accountDAO.save(input);
+    await this.accountDAO.save(input);
     return {
-      accountId: input.id,
+      accountId: input.accountId,
     };
   }
 }

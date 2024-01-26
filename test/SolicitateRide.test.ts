@@ -66,7 +66,7 @@ test("should throw an error if passenger does not exist", async () => {
     toLong: -46.62543,
   };
   await expect(() => solicitateRide.execute(input)).rejects.toThrow(
-    "Passenger does not exist"
+    "Account does not exist"
   );
 });
 

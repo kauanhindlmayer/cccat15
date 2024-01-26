@@ -13,7 +13,7 @@ export default class AccountDAO implements IAccountDAO {
     await connection.query(
       "insert into cccat15.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) values ($1, $2, $3, $4, $5, $6, $7)",
       [
-        account.id,
+        account.accountId,
         account.name,
         account.email,
         account.cpf,
