@@ -5,8 +5,21 @@ import {
   validateCpf,
   validateCarPlate,
 } from "./utils";
-import { SignupInput, SignupOutput } from "../types/signup.interfaces";
 import IAccountDAO from "./AccountDAO";
+
+interface SignupInput {
+  id?: string;
+  name: string;
+  email: string;
+  cpf: string;
+  carPlate?: string;
+  isPassenger?: boolean;
+  isDriver?: boolean;
+}
+
+interface SignupOutput {
+  accountId: string;
+}
 
 export default class Signup {
   // Port

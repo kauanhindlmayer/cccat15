@@ -1,4 +1,4 @@
-import pgp from "pg-promise";
+import { connection } from "./databaseConnection";
 
 // Port
 export default interface IAccountDAO {
@@ -10,7 +10,6 @@ export default interface IAccountDAO {
 // Adapter Database
 export default class AccountDAO implements IAccountDAO {
   async save(account: any) {
-    const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
     await connection.query(
       "insert into cccat15.account (account_id, name, email, cpf, car_plate, is_passenger, is_driver) values ($1, $2, $3, $4, $5, $6, $7)",
       [
@@ -23,43 +22,52 @@ export default class AccountDAO implements IAccountDAO {
         !!account.isDriver,
       ]
     );
-    await connection.$pool.end();
   }
 
   async getByEmail(email: string) {
-    const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
     const [account] = await connection.query(
       "select * from cccat15.account where email = $1",
       [email]
     );
-    await connection.$pool.end();
-    return account;
+    if (!account) return null;
+    return this.mapAccount(account);
   }
 
   async getById(accountId: string) {
-    const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
     const [account] = await connection.query(
       "select * from cccat15.account where account_id = $1",
       [accountId]
     );
-    await connection.$pool.end();
-    return account;
+    if (!account) return null;
+    return this.mapAccount(account);
+  }
+
+  mapAccount(account: any) {
+    return {
+      accountId: account.account_id,
+      name: account.name,
+      email: account.email,
+      cpf: account.cpf,
+      carPlate: account.car_plate,
+      isPassenger: account.is_passenger,
+      isDriver: account.is_driver,
+    };
   }
 }
 
 // Adapter In Memory
-export class AccountDAOInMemory implements IAccountDAO {
-  private accounts: any[] = [];
+// export class AccountDAOInMemory implements IAccountDAO {
+//   private accounts: any[] = [];
 
-  async save(account: any) {
-    this.accounts.push(account);
-  }
+//   async save(account: any) {
+//     this.accounts.push(account);
+//   }
 
-  async getByEmail(email: string) {
-    return this.accounts.find((account) => account.email === email);
-  }
+//   async getByEmail(email: string) {
+//     return this.accounts.find((account) => account.email === email);
+//   }
 
-  async getById(id: string) {
-    return this.accounts.find((account) => account.id === id);
-  }
-}
+//   async getById(id: string) {
+//     return this.accounts.find((account) => account.id === id);
+//   }
+// }
