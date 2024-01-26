@@ -4,7 +4,7 @@ import pgp from "pg-promise";
 export default interface IAccountDAO {
   save(account: any): Promise<void>;
   getByEmail(email: string): Promise<any>;
-  getById(id: string): Promise<any>;
+  getById(accountId: string): Promise<any>;
 }
 
 // Adapter Database
@@ -36,11 +36,11 @@ export default class AccountDAO implements IAccountDAO {
     return account;
   }
 
-  async getById(id: string) {
+  async getById(accountId: string) {
     const connection = pgp()("postgres://postgres:123456@localhost:5432/app");
     const [account] = await connection.query(
       "select * from cccat15.account where account_id = $1",
-      [id]
+      [accountId]
     );
     await connection.$pool.end();
     return account;

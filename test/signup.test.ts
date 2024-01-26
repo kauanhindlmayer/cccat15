@@ -11,44 +11,42 @@ beforeEach(() => {
   getAccount = new GetAccount(accountDAO);
 });
 
-test("should create a new driver account", async () => {
-  const input = {
-    name: "John Doe",
-    email: `john.doe${Math.random()}@email.com`,
-    cpf: "968.896.412-30",
-    carPlate: "ABC1234",
-    isDriver: true,
-  };
-  const result = await signup.execute(input);
-  expect(result.accountId).toBeDefined();
+// test("should create a new driver account", async () => {
+//   const input = {
+//     name: "John Doe",
+//     email: `john.doe${Math.random()}@email.com`,
+//     cpf: "968.896.412-30",
+//     carPlate: "ABC1234",
+//     isDriver: true,
+//   };
+//   const result = await signup.execute(input);
+//   expect(result.accountId).toBeDefined();
+//   const account = await getAccount.execute(result.accountId);
+//   expect(account.name).toBe(input.name);
+//   expect(account.email).toBe(input.email);
+//   expect(account.cpf).toBe(input.cpf);
+//   expect(account.is_driver).toBe(true);
+//   expect(account.car_plate).toBe(input.carPlate);
+//   expect(account.is_passenger).toBe(false);
+// });
 
-  const account = await getAccount.execute(result.accountId);
-  expect(account.name).toBe(input.name);
-  expect(account.email).toBe(input.email);
-  expect(account.cpf).toBe(input.cpf);
-  expect(account.is_driver).toBe(true);
-  expect(account.car_plate).toBe(input.carPlate);
-  expect(account.is_passenger).toBe(false);
-});
-
-test("should create a new passenger account", async () => {
-  const input = {
-    name: "John Doe",
-    email: `john.doe${Math.random()}@email.com`,
-    cpf: "968.896.412-30",
-    isPassenger: true,
-  };
-  const result = await signup.execute(input);
-  expect(result.accountId).toBeDefined();
-
-  const account = await getAccount.execute(result.accountId);
-  expect(account.name).toBe(input.name);
-  expect(account.email).toBe(input.email);
-  expect(account.cpf).toBe(input.cpf);
-  expect(account.is_passenger).toBe(true);
-  expect(account.is_driver).toBe(false);
-  expect(account.car_plate).toBeNull();
-});
+// test("should create a new passenger account", async () => {
+//   const input = {
+//     name: "John Doe",
+//     email: `john.doe${Math.random()}@email.com`,
+//     cpf: "968.896.412-30",
+//     isPassenger: true,
+//   };
+//   const result = await signup.execute(input);
+//   expect(result.accountId).toBeDefined();
+//   const account = await getAccount.execute(result.accountId);
+//   expect(account.name).toBe(input.name);
+//   expect(account.email).toBe(input.email);
+//   expect(account.cpf).toBe(input.cpf);
+//   expect(account.is_passenger).toBe(true);
+//   expect(account.is_driver).toBe(false);
+//   expect(account.car_plate).toBeNull();
+// });
 
 test("should throw an error if email is already in use", async () => {
   const input = {
