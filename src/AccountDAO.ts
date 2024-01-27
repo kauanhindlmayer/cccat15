@@ -56,18 +56,22 @@ export default class AccountDAO implements IAccountDAO {
 }
 
 // Adapter In Memory
-// export class AccountDAOInMemory implements IAccountDAO {
-//   private accounts: any[] = [];
+export class AccountDAOInMemory implements IAccountDAO {
+  private accounts: any[] = [];
 
-//   async save(account: any) {
-//     this.accounts.push(account);
-//   }
+  async save(account: any) {
+    this.accounts.push(account);
+  }
 
-//   async getByEmail(email: string) {
-//     return this.accounts.find((account) => account.email === email);
-//   }
+  async getByEmail(email: string) {
+    return this.accounts.find((account) => account.email === email);
+  }
 
-//   async getById(id: string) {
-//     return this.accounts.find((account) => account.id === id);
-//   }
-// }
+  async getById(id: string) {
+    return this.accounts.find((account) => account.id === id);
+  }
+
+  mapAccount(account: any) {
+    return account;
+  }
+}

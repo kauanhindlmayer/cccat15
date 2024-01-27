@@ -19,7 +19,7 @@ export default class SolicitateRide {
 
   async execute(input: SolicitateRideInput): Promise<SolicitateRideOutput> {
     const account = await this.accountDAO.getById(input.passengerId);
-    if (account === null) throw new Error("Account does not exist");
+    if (!account) throw new Error("Account does not exist");
     if (!account.isPassenger) throw new Error("Account is not a passenger");
     const rides = await this.rideDAO.getByPassengerId(input.passengerId);
     const hasActiveRide = rides.some(
