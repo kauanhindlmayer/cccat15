@@ -1,23 +1,27 @@
-import SolicitateRide from "../src/SolicitateRide";
-import Signup from "../src/Signup";
-import AccountDAO from "../src/AccountDAO";
-import RideDAO from "../src/RideDAO";
-import GetRide from "../src/GetRide";
+import SolicitateRide from "../../src/application/usecase/SolicitateRide";
+import Signup from "../../src/application/usecase/Signup";
+import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
+import RideRepository from "../../src/infrastructure/repository/RideRepository";
+import GetRide from "../../src/application/usecase/GetRide";
 import crypto from "crypto";
-import AcceptRide from "../src/AcceptRide";
+import AcceptRide from "../../src/application/usecase/AcceptRide";
+import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
+import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 
+let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
 let signup: Signup;
 let getRide: GetRide;
 let acceptRide: AcceptRide;
 
 beforeEach(() => {
-  const accountDAO = new AccountDAO();
-  const rideDAO = new RideDAO();
-  signup = new Signup(accountDAO);
-  solicitateRide = new SolicitateRide(accountDAO, rideDAO);
-  getRide = new GetRide(rideDAO);
-  acceptRide = new AcceptRide(accountDAO, rideDAO);
+  connection = new PgPromiseAdapter();
+  const accountRepository = new AccountRepository(connection);
+  const rideRepository = new RideRepository(connection);
+  signup = new Signup(accountRepository);
+  solicitateRide = new SolicitateRide(accountRepository, rideRepository);
+  getRide = new GetRide(rideRepository, accountRepository);
+  acceptRide = new AcceptRide(accountRepository, rideRepository);
 });
 
 test("should throw an error if driver is not a driver", async () => {
@@ -107,3 +111,7 @@ test("should throw an error if ride does not exist", async () => {
 //   const ride = await getRide.execute({ rideId: input.rideId });
 //   expect(ride?.driver?.accountId).toBe(input.driverId);
 // });
+
+afterEach(async () => {
+  await connection.close();
+});

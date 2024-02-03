@@ -1,20 +1,24 @@
-import SolicitateRide from "../src/SolicitateRide";
-import Signup from "../src/Signup";
-import AccountDAO from "../src/AccountDAO";
-import RideDAO from "../src/RideDAO";
-import GetRide from "../src/GetRide";
+import SolicitateRide from "../../src/application/usecase/SolicitateRide";
+import Signup from "../../src/application/usecase/Signup";
+import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
+import RideRepository from "../../src/infrastructure/repository/RideRepository";
+import GetRide from "../../src/application/usecase/GetRide";
 import crypto from "crypto";
+import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
+import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 
+let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
 let signup: Signup;
 let getRide: GetRide;
 
 beforeEach(() => {
-  const accountDAO = new AccountDAO();
-  const rideDAO = new RideDAO();
-  signup = new Signup(accountDAO);
-  solicitateRide = new SolicitateRide(accountDAO, rideDAO);
-  getRide = new GetRide(rideDAO);
+  connection = new PgPromiseAdapter();
+  const accountRepository = new AccountRepository(connection);
+  const rideRepository = new RideRepository(connection);
+  signup = new Signup(accountRepository);
+  solicitateRide = new SolicitateRide(accountRepository, rideRepository);
+  getRide = new GetRide(rideRepository, accountRepository);
 });
 
 test("should create a new ride", async () => {
@@ -126,7 +130,7 @@ test("should create a new ride with the correct status", async () => {
     toLong: -46.62543,
   };
   const result = await solicitateRide.execute(input);
-  const ride = await getRide.execute({ rideId: result.rideId });
+  const ride = await getRide.execute(result.rideId);
   expect(ride).toBeDefined();
   expect(ride?.status).toBe("requested");
 });
@@ -147,7 +151,11 @@ test("should define the correct date for the ride", async () => {
     toLong: -46.62543,
   };
   const result = await solicitateRide.execute(input);
-  const ride = await getRide.execute({ rideId: result.rideId });
+  const ride = await getRide.execute(result.rideId);
   expect(ride).toBeDefined();
   expect(ride?.date).toBeDefined();
+});
+
+afterEach(async () => {
+  await connection.close();
 });

@@ -1,4 +1,4 @@
-import { validateName } from "../src/utils";
+import { validateName } from "../../src/domain/validateName";
 
 test.each(["John Doe", "João da Silva", "João da Silva Neto"])(
   `Should test if name is valid: %s`,

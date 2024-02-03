@@ -1,4 +1,4 @@
-import { validateCarPlate } from "../src/utils";
+import { validateCarPlate } from "../../src/domain/validateCarPlate";
 
 test.each(["ABC1234", "TRH4328", "KCO4309"])(
   `Should test if car plate is valid: %s`,

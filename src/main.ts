@@ -1,0 +1,20 @@
+import Signup from "./application/usecase/Signup";
+import GetAccount from "./application/usecase/GetAccount";
+import AccountRepository from "./infrastructure/repository/AccountRepository";
+import RideRepository from "./infrastructure/repository/RideRepository";
+import SolicitateRide from "./application/usecase/SolicitateRide";
+import GetRide from "./application/usecase/GetRide";
+import PgPromiseAdapter from "./infrastructure/database/DatabaseConnection";
+import ExpressAdapter from "./infrastructure/http/HttpServer";
+import MainController from "./infrastructure/http/MainController";
+
+const httpServer = new ExpressAdapter();
+const connection = new PgPromiseAdapter();
+const accountRepository = new AccountRepository(connection);
+const rideRepository = new RideRepository(connection);
+const signup = new Signup(accountRepository);
+const getAccount = new GetAccount(accountRepository);
+const solicitateRide = new SolicitateRide(accountRepository, rideRepository);
+const getRide = new GetRide(rideRepository, accountRepository);
+new MainController(httpServer, signup, getAccount, solicitateRide, getRide);
+httpServer.listen(3000);

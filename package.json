@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "ts-node  src/server.ts --watch",
+    "start": "ts-node  src/main.ts --watch",
     "test": "npx jest --runInBand",
     "test:cov": "npx jest --coverage --runInBand --detectOpenHandles",
     "test:watch": "npx jest --watchAll --detectOpenHandles"

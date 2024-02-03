@@ -1,14 +1,18 @@
-import GetAccount from "../src/GetAccount";
-import Signup from "../src/Signup";
-import AccountDAO from "../src/AccountDAO";
+import GetAccount from "../../src/application/usecase/GetAccount";
+import Signup from "../../src/application/usecase/Signup";
+import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
+import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
+import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 
+let connection: IDatabaseConnection;
 let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-  const accountDAO = new AccountDAO();
-  signup = new Signup(accountDAO);
-  getAccount = new GetAccount(accountDAO);
+  connection = new PgPromiseAdapter();
+  const accountRepository = new AccountRepository(connection);
+  signup = new Signup(accountRepository);
+  getAccount = new GetAccount(accountRepository);
 });
 
 test("should create a new driver account", async () => {
@@ -103,4 +107,8 @@ test("should throw an error if car plate is invalid", async () => {
   await expect(() => signup.execute(input)).rejects.toThrow(
     "Invalid car plate"
   );
+});
+
+afterEach(async () => {
+  await connection.close();
 });

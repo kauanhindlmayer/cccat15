@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const baseUrl = "http://localhost:5000";
+const baseUrl = "http://localhost:3000";
 
 test("should create an account on route /signup", async () => {
   const input = {
@@ -10,7 +10,7 @@ test("should create an account on route /signup", async () => {
     isPassenger: true,
   };
   const response = await axios.post(`${baseUrl}/signup`, input);
-  expect(response.status).toBe(201);
+  expect(response.status).toBe(200);
   expect(response.data.accountId).toBeDefined();
 });
 
@@ -48,7 +48,20 @@ test("should create a ride on route /solicitate-ride", async () => {
     toLat: -23.56168,
     toLong: -46.62543,
   };
-  const response = await axios.post(`${baseUrl}/solicitate-ride`, input);
-  expect(response.status).toBe(201);
-  expect(response.data.rideId).toBeDefined();
+  const solicitateRideOutput = await axios.post(
+    `${baseUrl}/solicitate-ride`,
+    input
+  );
+  expect(solicitateRideOutput.status).toBe(200);
+  expect(solicitateRideOutput.data.rideId).toBeDefined();
+  const getRideOutput = await axios.get(
+    `${baseUrl}/ride/${solicitateRideOutput.data.rideId}`
+  );
+  expect(getRideOutput.status).toBe(200);
+  expect(getRideOutput.data.rideId).toBe(solicitateRideOutput.data.rideId);
+  expect(getRideOutput.data.status).toBe("requested");
+  expect(getRideOutput.data.fromLat).toBe(input.fromLat);
+  expect(getRideOutput.data.fromLong).toBe(input.fromLong);
+  expect(getRideOutput.data.toLat).toBe(input.toLat);
+  expect(getRideOutput.data.toLong).toBe(input.toLong);
 });

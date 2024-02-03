@@ -1,12 +1,15 @@
-import SolicitateRide from "../src/SolicitateRide";
-import Signup from "../src/Signup";
-import AccountDAO from "../src/AccountDAO";
-import RideDAO from "../src/RideDAO";
-import GetRide from "../src/GetRide";
+import SolicitateRide from "../../src/application/usecase/SolicitateRide";
+import Signup from "../../src/application/usecase/Signup";
+import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
+import RideRepository from "../../src/infrastructure/repository/RideRepository";
+import GetRide from "../../src/application/usecase/GetRide";
 import crypto from "crypto";
-import AcceptRide from "../src/AcceptRide";
-import StartRide from "../src/StartRide";
+import AcceptRide from "../../src/application/usecase/AcceptRide";
+import StartRide from "../../src/application/usecase/StartRide";
+import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
+import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 
+let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
 let signup: Signup;
 let getRide: GetRide;
@@ -14,20 +17,19 @@ let acceptRide: AcceptRide;
 let startRide: StartRide;
 
 beforeEach(() => {
-  const accountDAO = new AccountDAO();
-  const rideDAO = new RideDAO();
-  signup = new Signup(accountDAO);
-  solicitateRide = new SolicitateRide(accountDAO, rideDAO);
-  getRide = new GetRide(rideDAO);
-  acceptRide = new AcceptRide(accountDAO, rideDAO);
-  startRide = new StartRide(rideDAO);
+  connection = new PgPromiseAdapter();
+  const accountRepository = new AccountRepository(connection);
+  const rideRepository = new RideRepository(connection);
+  signup = new Signup(accountRepository);
+  solicitateRide = new SolicitateRide(accountRepository, rideRepository);
+  getRide = new GetRide(rideRepository, accountRepository);
+  acceptRide = new AcceptRide(accountRepository, rideRepository);
+  startRide = new StartRide(rideRepository);
 });
 
 test("should throw an error if ride does not exist", async () => {
-  const input = {
-    rideId: crypto.randomUUID(),
-  };
-  await expect(() => startRide.execute(input)).rejects.toThrow(
+  const invalidRideId = crypto.randomUUID();
+  await expect(() => startRide.execute(invalidRideId)).rejects.toThrow(
     "Ride does not exist"
   );
 });
@@ -50,12 +52,9 @@ test("should throw an error if ride is not in the accepted status", async () => 
   const solicitateRideOutput = await solicitateRide.execute(
     solicitateRideInput
   );
-  const input = {
-    rideId: solicitateRideOutput.rideId,
-  };
-  await expect(() => startRide.execute(input)).rejects.toThrow(
-    "Ride is not in the accepted status"
-  );
+  await expect(() =>
+    startRide.execute(solicitateRideOutput.rideId)
+  ).rejects.toThrow("Ride is not in the accepted status");
 });
 
 test("should start ride", async () => {
@@ -89,10 +88,12 @@ test("should start ride", async () => {
     driverId: driverSignupOutput.accountId,
   };
   await acceptRide.execute(acceptRideInput);
-  const input = {
-    rideId: solicitateRideOutput.rideId,
-  };
-  await startRide.execute(input);
-  const ride = await getRide.execute({ rideId: solicitateRideOutput.rideId });
-  expect(ride?.status).toBe("in_progress");
+  await startRide.execute(solicitateRideOutput.rideId);
+  const ride = await getRide.execute(solicitateRideOutput.rideId);
+  expect(ride.status).toBe("in_progress");
+  expect(ride.passengerName).toBe(passengerSignupInput.name);
+});
+
+afterEach(async () => {
+  await connection.close();
 });

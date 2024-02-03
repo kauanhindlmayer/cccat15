@@ -1,15 +1,19 @@
-import Signup from "../src/Signup";
-import GetAccount from "../src/GetAccount";
-import AccountDAO from "../src/AccountDAO";
+import Signup from "../../src/application/usecase/Signup";
+import GetAccount from "../../src/application/usecase/GetAccount";
+import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
 import crypto from "crypto";
+import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
+import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 
+let connection: IDatabaseConnection;
 let signup: Signup;
 let getAccount: GetAccount;
 
 beforeEach(() => {
-  const accountDAO = new AccountDAO();
-  signup = new Signup(accountDAO);
-  getAccount = new GetAccount(accountDAO);
+  connection = new PgPromiseAdapter();
+  const accountRepository = new AccountRepository(connection);
+  signup = new Signup(accountRepository);
+  getAccount = new GetAccount(accountRepository);
 });
 
 test("should get an account by id if it exists", async () => {
@@ -34,4 +38,8 @@ test("should return undefined if account does not exist", async () => {
   const invalidId = crypto.randomUUID();
   const account = await getAccount.execute(invalidId);
   expect(account).toBeNull();
+});
+
+afterEach(async () => {
+  await connection.close();
 });
