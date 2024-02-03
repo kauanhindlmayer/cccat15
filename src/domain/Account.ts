@@ -1,8 +1,5 @@
 import crypto from "crypto";
-import { validateName } from "./validateName";
-import { validateEmail } from "./validateEmail";
 import { validateCpf } from "./validateCpf";
-import { validateCarPlate } from "./validateCarPlate";
 
 export default class Account {
   private constructor(
@@ -14,10 +11,10 @@ export default class Account {
     readonly isDriver: boolean,
     readonly carPlate?: string
   ) {
-    if (!validateName(name)) throw new Error("Invalid name");
-    if (!validateEmail(email)) throw new Error("Invalid email");
+    if (!this.isNameValid(name)) throw new Error("Invalid name");
+    if (!this.isEmailValid(email)) throw new Error("Invalid email");
     if (!validateCpf(cpf)) throw new Error("Invalid cpf");
-    if (isDriver && carPlate && !validateCarPlate(carPlate!))
+    if (isDriver && carPlate && !this.isCarPlateValid(carPlate))
       throw new Error("Invalid car plate");
   }
 
@@ -59,5 +56,20 @@ export default class Account {
       isDriver,
       carPlate
     );
+  }
+
+  private isNameValid(name: string) {
+    const nameRegex = /[a-zA-Z] [a-zA-Z]+/;
+    return name.match(nameRegex);
+  }
+
+  private isEmailValid(email: string) {
+    const emailRegex = /^(.+)@(.+)$/;
+    return email.match(emailRegex);
+  }
+
+  private isCarPlateValid(carPlate: string) {
+    const carPlateRegex = /[A-Z]{3}[0-9]{4}/;
+    return carPlate.match(carPlateRegex);
   }
 }

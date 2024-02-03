@@ -54,7 +54,7 @@ export default class RideRepository implements IRideRepository {
 
   async getActiveRidesByDriverId(driverId: string): Promise<Ride[]> {
     const rides = await this.connection.query(
-      "select * from cccat15.ride where driver_id = $1 and status != 'completed",
+      "select * from cccat15.ride where driver_id = $1 and status != 'completed'",
       [driverId]
     );
     return rides.map((ride: any) => {
@@ -71,11 +71,12 @@ export default class RideRepository implements IRideRepository {
     });
   }
 
-  async getById(rideId: string): Promise<Ride> {
+  async getById(rideId: string): Promise<Ride | undefined> {
     const [ride] = await this.connection.query(
       "select * from cccat15.ride where ride_id = $1",
       [rideId]
     );
+    if (!ride) return;
     return Ride.restore(
       ride.ride_id,
       ride.passenger_id,

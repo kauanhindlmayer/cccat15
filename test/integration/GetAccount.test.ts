@@ -26,18 +26,19 @@ test("should get an account by id if it exists", async () => {
   const result = await signup.execute(input);
   const account = await getAccount.execute(result.accountId);
   expect(account).toBeDefined();
-  expect(account?.name).toBe(input.name);
-  expect(account?.email).toBe(input.email);
-  expect(account?.cpf).toBe(input.cpf);
-  expect(account?.isPassenger).toBe(true);
-  expect(account?.isDriver).toBe(false);
-  expect(account?.carPlate).toBeNull();
+  expect(account.name).toBe(input.name);
+  expect(account.email).toBe(input.email);
+  expect(account.cpf).toBe(input.cpf);
+  expect(account.isPassenger).toBe(true);
+  expect(account.isDriver).toBe(false);
+  expect(account.carPlate).toBeNull();
 });
 
-test("should return undefined if account does not exist", async () => {
-  const invalidId = crypto.randomUUID();
-  const account = await getAccount.execute(invalidId);
-  expect(account).toBeNull();
+test("should throw an error if account does not exist", async () => {
+  const invalidAccountId = crypto.randomUUID();
+  await expect(getAccount.execute(invalidAccountId)).rejects.toThrow(
+    "Account does not exist"
+  );
 });
 
 afterEach(async () => {
