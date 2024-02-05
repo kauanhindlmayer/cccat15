@@ -1,4 +1,4 @@
-import Ride from "../../domain/Ride";
+import Ride from "../../domain/entity/Ride";
 import IDatabaseConnection from "../database/DatabaseConnection";
 
 export default interface IRideRepository {
@@ -6,8 +6,7 @@ export default interface IRideRepository {
   getActiveRidesByPassengerId(passengerId: string): Promise<Ride[]>;
   getActiveRidesByDriverId(driverId: string): Promise<Ride[]>;
   getById(rideId: string): Promise<Ride>;
-  acceptRide(rideId: string, driverId: string): Promise<void>;
-  startRide(rideId: string): Promise<void>;
+  update(ride: Ride): Promise<void>;
 }
 
 export default class RideRepository implements IRideRepository {
@@ -19,10 +18,10 @@ export default class RideRepository implements IRideRepository {
       [
         ride.rideId,
         ride.passengerId,
-        ride.fromLat,
-        ride.fromLong,
-        ride.toLat,
-        ride.toLong,
+        ride.getFromLat(),
+        ride.getFromLong(),
+        ride.getToLat(),
+        ride.getToLong(),
         ride.status,
         ride.date,
       ]
@@ -45,7 +44,8 @@ export default class RideRepository implements IRideRepository {
           parseFloat(ride.to_lat),
           parseFloat(ride.to_long),
           ride.status,
-          ride.date
+          ride.date,
+          ride.driver_id
         )
       );
     }
@@ -66,7 +66,8 @@ export default class RideRepository implements IRideRepository {
         parseFloat(ride.to_lat),
         parseFloat(ride.to_long),
         ride.status,
-        ride.date
+        ride.date,
+        ride.driver_id
       );
     });
   }
@@ -85,21 +86,15 @@ export default class RideRepository implements IRideRepository {
       parseFloat(ride.to_lat),
       parseFloat(ride.to_long),
       ride.status,
-      ride.date
+      ride.date,
+      ride.driver_id
     );
   }
 
-  async acceptRide(rideId: string, driverId: string): Promise<void> {
+  async update(ride: Ride): Promise<void> {
     await this.connection.query(
-      "update cccat15.ride set driver_id = $1, status = 'accepted' where ride_id = $2",
-      [driverId, rideId]
-    );
-  }
-
-  async startRide(rideId: string): Promise<void> {
-    await this.connection.query(
-      "update cccat15.ride set status = 'in_progress' where ride_id = $1",
-      [rideId]
+      "update cccat15.ride set status = $1, driver_id = $2 where ride_id = $3",
+      [ride.getStatus(), ride.getDriverId(), ride.rideId]
     );
   }
 }
@@ -127,16 +122,5 @@ export default class RideRepository implements IRideRepository {
 //   getById(rideId: string): Promise<any> {
 //     const [ride] = this.rides.filter((ride) => ride.ride_id === rideId);
 //     return Promise.resolve(ride);
-//   }
-
-//   async acceptRide(rideId: string, driverId: string): Promise<void> {
-//     const [ride] = this.rides.filter((ride) => ride.ride_id === rideId);
-//     ride.driver_id = driverId;
-//     ride.status = "accepted";
-//   }
-
-//   async startRide(rideId: string) {
-//     const [ride] = this.rides.filter((ride) => ride.id === rideId);
-//     ride.status = "in_progress";
 //   }
 // }

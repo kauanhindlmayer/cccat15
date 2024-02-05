@@ -1,8 +1,8 @@
-import SolicitateRide from "../../application/usecase/SolicitateRide";
-import GetAccount from "../../application/usecase/GetAccount";
-import GetRide from "../../application/usecase/GetRide";
+import SolicitateRide from "../../application/useCase/SolicitateRide";
+import GetAccount from "../../application/useCase/GetAccount";
+import GetRide from "../../application/useCase/GetRide";
 import IHttpServer from "./HttpServer";
-import Signup from "../../application/usecase/Signup";
+import Signup from "../../application/useCase/Signup";
 
 // Interface Adapter
 export default class MainController {

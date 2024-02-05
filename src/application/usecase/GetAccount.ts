@@ -1,4 +1,4 @@
-import Account from "../../domain/Account";
+import Account from "../../domain/entity/Account";
 import IAccountRepository from "../../infrastructure/repository/AccountRepository";
 
 export default class GetAccount {

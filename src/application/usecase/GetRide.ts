@@ -14,8 +14,15 @@ export default class GetRide {
     if (!ride) throw new Error("Ride does not exist");
     const passenger = await this.accountRepository.getById(ride.passengerId);
     return {
-      ...ride,
-      passengerName: passenger!.name,
+      rideId: ride.rideId,
+      passengerId: ride.passengerId,
+      date: ride.date,
+      status: ride.getStatus(),
+      toLat: ride.getToLat(),
+      toLong: ride.getToLong(),
+      fromLat: ride.getFromLat(),
+      fromLong: ride.getFromLong(),
+      passengerName: passenger!.getName(),
     };
   }
 }

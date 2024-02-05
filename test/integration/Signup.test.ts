@@ -1,5 +1,5 @@
-import GetAccount from "../../src/application/usecase/GetAccount";
-import Signup from "../../src/application/usecase/Signup";
+import GetAccount from "../../src/application/useCase/GetAccount";
+import Signup from "../../src/application/useCase/Signup";
 import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
 import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
 import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
@@ -27,12 +27,12 @@ test("should create a new driver account", async () => {
   expect(result.accountId).toBeDefined();
   const account = await getAccount.execute(result.accountId);
   expect(account).toBeDefined();
-  expect(account?.name).toBe(input.name);
-  expect(account?.email).toBe(input.email);
-  expect(account?.cpf).toBe(input.cpf);
-  expect(account?.isDriver).toBe(true);
-  expect(account?.carPlate).toBe(input.carPlate);
-  expect(account?.isPassenger).toBe(false);
+  expect(account.getName()).toBe(input.name);
+  expect(account.getEmail()).toBe(input.email);
+  expect(account.getCpf()).toBe(input.cpf);
+  expect(account.isDriver).toBe(true);
+  expect(account.getCarPlate()).toBe(input.carPlate);
+  expect(account.isPassenger).toBe(false);
 });
 
 test("should create a new passenger account", async () => {
@@ -46,12 +46,12 @@ test("should create a new passenger account", async () => {
   expect(result.accountId).toBeDefined();
   const account = await getAccount.execute(result.accountId);
   expect(account).toBeDefined();
-  expect(account?.name).toBe(input.name);
-  expect(account?.email).toBe(input.email);
-  expect(account?.cpf).toBe(input.cpf);
-  expect(account?.isPassenger).toBe(true);
-  expect(account?.isDriver).toBe(false);
-  expect(account?.carPlate).toBeNull();
+  expect(account.getName()).toBe(input.name);
+  expect(account.getEmail()).toBe(input.email);
+  expect(account.getCpf()).toBe(input.cpf);
+  expect(account.isPassenger).toBe(true);
+  expect(account.isDriver).toBe(false);
+  expect(account.getCarPlate()).toBeUndefined();
 });
 
 test("should throw an error if email is already in use", async () => {

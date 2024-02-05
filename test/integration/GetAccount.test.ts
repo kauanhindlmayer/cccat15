@@ -1,5 +1,5 @@
-import Signup from "../../src/application/usecase/Signup";
-import GetAccount from "../../src/application/usecase/GetAccount";
+import Signup from "../../src/application/useCase/Signup";
+import GetAccount from "../../src/application/useCase/GetAccount";
 import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
 import crypto from "crypto";
 import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
@@ -26,12 +26,12 @@ test("should get an account by id if it exists", async () => {
   const result = await signup.execute(input);
   const account = await getAccount.execute(result.accountId);
   expect(account).toBeDefined();
-  expect(account.name).toBe(input.name);
-  expect(account.email).toBe(input.email);
-  expect(account.cpf).toBe(input.cpf);
+  expect(account.getName()).toBe(input.name);
+  expect(account.getEmail()).toBe(input.email);
+  expect(account.getCpf()).toBe(input.cpf);
   expect(account.isPassenger).toBe(true);
   expect(account.isDriver).toBe(false);
-  expect(account.carPlate).toBeNull();
+  expect(account.getCarPlate()).toBeUndefined();
 });
 
 test("should throw an error if account does not exist", async () => {

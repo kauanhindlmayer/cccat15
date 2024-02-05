@@ -1,11 +1,11 @@
-import SolicitateRide from "../../src/application/usecase/SolicitateRide";
-import Signup from "../../src/application/usecase/Signup";
+import SolicitateRide from "../../src/application/useCase/SolicitateRide";
+import Signup from "../../src/application/useCase/Signup";
 import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
 import RideRepository from "../../src/infrastructure/repository/RideRepository";
-import GetRide from "../../src/application/usecase/GetRide";
+import GetRide from "../../src/application/useCase/GetRide";
 import crypto from "crypto";
-import AcceptRide from "../../src/application/usecase/AcceptRide";
-import StartRide from "../../src/application/usecase/StartRide";
+import AcceptRide from "../../src/application/useCase/AcceptRide";
+import StartRide from "../../src/application/useCase/StartRide";
 import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
 import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 

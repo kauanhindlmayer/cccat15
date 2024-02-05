@@ -1,5 +1,5 @@
 import IAccountRepository from "../../infrastructure/repository/AccountRepository";
-import Account from "../../domain/Account";
+import Account from "../../domain/entity/Account";
 
 // Use Case
 export default class Signup {
