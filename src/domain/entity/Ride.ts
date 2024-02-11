@@ -2,6 +2,7 @@ import crypto from "crypto";
 import Coordinate from "../valueObject/Coordinate";
 import DistanceCalculator from "../services/DistanceCalculator";
 
+// Aggregate (Ride<AR>, Coordinate, Coordinate, Coordinate)
 export default class Ride {
   private from: Coordinate;
   private to: Coordinate;

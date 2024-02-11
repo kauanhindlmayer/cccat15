@@ -4,6 +4,7 @@ import Email from "../valueObject/Email";
 import CarPlate from "../valueObject/CarPlate";
 import Cpf from "../valueObject/Cpf";
 
+// Account é uma entidade e atua como raiz do agregado (Account<AR>, Name, Email, Cpf, CarPlate)
 export default class Account {
   private name: Name;
   private email: Email;

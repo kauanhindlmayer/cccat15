@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import Coordinate from "../valueObject/Coordinate";
 
-// Aggregate (Position<AR>, coordinate)
+// Aggregate (Position<AR>, Coordinate)
 export default class Position {
   private coordinate: Coordinate;
 
