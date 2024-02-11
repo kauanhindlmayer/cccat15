@@ -9,6 +9,7 @@ import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnecti
 import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 import UpdatePosition from "../../src/application/useCase/UpdatePosition";
 import PositionRepository from "../../src/infrastructure/repository/PositionRepository";
+import GetPositions from "../../src/application/useCase/GetPositions";
 
 let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
@@ -17,6 +18,7 @@ let getRide: GetRide;
 let acceptRide: AcceptRide;
 let startRide: StartRide;
 let updatePosition: UpdatePosition;
+let getPositions: GetPositions;
 
 beforeEach(() => {
   connection = new PgPromiseAdapter();
@@ -29,6 +31,7 @@ beforeEach(() => {
   acceptRide = new AcceptRide(accountRepository, rideRepository);
   startRide = new StartRide(rideRepository);
   updatePosition = new UpdatePosition(rideRepository, positionRepository);
+  getPositions = new GetPositions(positionRepository);
 });
 
 test("should start ride", async () => {
@@ -73,6 +76,13 @@ test("should start ride", async () => {
   expect(getRideOutput.distance).toBe(10);
   expect(getRideOutput.lastLat).toBe(-27.496887588317275);
   expect(getRideOutput.lastLong).toBe(-48.522234807851476);
+  const outputGetPositions = await getPositions.execute(
+    solicitateRideOutput.rideId
+  );
+  expect(outputGetPositions.length).toBe(1);
+  expect(outputGetPositions[0].lat).toBe(-27.496887588317275);
+  expect(outputGetPositions[0].long).toBe(-48.522234807851476);
+  expect(outputGetPositions[0].rideId).toBe(solicitateRideOutput.rideId);
 });
 
 afterEach(async () => {

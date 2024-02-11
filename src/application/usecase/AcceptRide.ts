@@ -13,7 +13,7 @@ export default class AcceptRide {
     const account = await this.accountRepository.getById(input.driverId);
     if (!account) throw new Error("Account does not exist");
     if (!account.isDriver) throw new Error("Account is not a driver");
-    const [hasActiveRide] = await this.rideRepository.getActiveRidesByDriverId(
+    const hasActiveRide = await this.rideRepository.hasActiveRidesForDriver(
       input.driverId
     );
     if (hasActiveRide) throw new Error("Driver has an active ride");

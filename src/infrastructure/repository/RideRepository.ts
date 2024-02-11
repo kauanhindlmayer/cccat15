@@ -3,8 +3,8 @@ import IDatabaseConnection from "../database/DatabaseConnection";
 
 export default interface IRideRepository {
   save(ride: Ride): Promise<void>;
-  getActiveRidesByPassengerId(passengerId: string): Promise<Ride[]>;
-  getActiveRidesByDriverId(driverId: string): Promise<Ride[]>;
+  hasActiveRidesForPassenger(passengerId: string): Promise<boolean>;
+  hasActiveRidesForDriver(driverId: string): Promise<boolean>;
   getById(rideId: string): Promise<Ride>;
   update(ride: Ride): Promise<void>;
 }
@@ -31,54 +31,20 @@ export default class RideRepository implements IRideRepository {
     );
   }
 
-  async getActiveRidesByPassengerId(passengerId: string): Promise<Ride[]> {
+  async hasActiveRidesForPassenger(passengerId: string): Promise<boolean> {
     const rides = await this.connection.query(
       "select * from cccat15.ride where passenger_id = $1 and status = 'requested'",
       [passengerId]
     );
-    const activeRides = [];
-    for (const ride of rides) {
-      activeRides.push(
-        Ride.restore(
-          ride.ride_id,
-          ride.passenger_id,
-          parseFloat(ride.from_lat),
-          parseFloat(ride.from_long),
-          parseFloat(ride.to_lat),
-          parseFloat(ride.to_long),
-          ride.status,
-          ride.date,
-          parseFloat(ride.last_lat),
-          parseFloat(ride.last_long),
-          parseFloat(ride.distance),
-          ride.driver_id
-        )
-      );
-    }
-    return activeRides;
+    return rides.length > 0;
   }
 
-  async getActiveRidesByDriverId(driverId: string): Promise<Ride[]> {
+  async hasActiveRidesForDriver(driverId: string): Promise<boolean> {
     const rides = await this.connection.query(
       "select * from cccat15.ride where driver_id = $1 and status != 'completed'",
       [driverId]
     );
-    return rides.map((ride: any) => {
-      return Ride.restore(
-        ride.ride_id,
-        ride.passenger_id,
-        parseFloat(ride.from_lat),
-        parseFloat(ride.from_long),
-        parseFloat(ride.to_lat),
-        parseFloat(ride.to_long),
-        ride.status,
-        ride.date,
-        parseFloat(ride.last_lat),
-        parseFloat(ride.last_long),
-        parseFloat(ride.distance),
-        ride.driver_id
-      );
-    });
+    return rides.length > 0;
   }
 
   async getById(rideId: string): Promise<Ride | undefined> {
@@ -110,29 +76,3 @@ export default class RideRepository implements IRideRepository {
     );
   }
 }
-
-// export class RideRepositoryInMemory implements IRideRepository {
-//   private rides: any[] = [];
-
-//   async save(ride: any): Promise<any> {
-//     this.rides.push(ride);
-//     return ride.ride_id;
-//   }
-
-//   getActiveRidesByPassengerId(passengerId: string): Promise<any> {
-//     const rides = this.rides.filter(
-//       (ride) => ride.passenger_id === passengerId
-//     );
-//     return Promise.resolve(rides);
-//   }
-
-//   getActiveRidesByDriverId(driverId: unknown): Promise<any> {
-//     const rides = this.rides.filter((ride) => ride.driver_id === driverId);
-//     return Promise.resolve(rides);
-//   }
-
-//   getById(rideId: string): Promise<any> {
-//     const [ride] = this.rides.filter((ride) => ride.ride_id === rideId);
-//     return Promise.resolve(ride);
-//   }
-// }

@@ -3,6 +3,7 @@ import IDatabaseConnection from "../database/DatabaseConnection";
 
 export default interface IPositionRepository {
   save(ride: Position): Promise<void>;
+  getByRideId(rideId: string): Promise<Position[]>;
 }
 
 export default class PositionRepository implements IPositionRepository {
@@ -18,6 +19,22 @@ export default class PositionRepository implements IPositionRepository {
         position.getLong(),
         position.date,
       ]
+    );
+  }
+
+  async getByRideId(rideId: string): Promise<Position[]> {
+    const positions = await this.connection.query(
+      "select * from cccat15.position where ride_id = $1",
+      [rideId]
+    );
+    return positions.map((position: any) =>
+      Position.restore(
+        position.position_id,
+        position.ride_id,
+        parseFloat(position.lat),
+        parseFloat(position.long),
+        position.date
+      )
     );
   }
 }

@@ -12,8 +12,9 @@ export default class SolicitateRide {
     const account = await this.accountRepository.getById(input.passengerId);
     if (!account) throw new Error("Account does not exist");
     if (!account.isPassenger) throw new Error("Account is not a passenger");
-    const [hasActiveRide] =
-      await this.rideRepository.getActiveRidesByPassengerId(input.passengerId);
+    const hasActiveRide = await this.rideRepository.hasActiveRidesForPassenger(
+      input.passengerId
+    );
     if (hasActiveRide) throw new Error("Passenger has an active ride");
     const ride = Ride.create(
       input.passengerId,
