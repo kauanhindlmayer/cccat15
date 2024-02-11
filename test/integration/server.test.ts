@@ -10,6 +10,7 @@ test("should create an account on route /signup", async () => {
     isPassenger: true,
   };
   const response = await axios.post(`${baseUrl}/signup`, input);
+  console.log(response.data);
   expect(response.status).toBe(200);
   expect(response.data.accountId).toBeDefined();
 });

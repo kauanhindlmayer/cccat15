@@ -13,28 +13,37 @@ export default class GetRide {
     const ride = await this.rideRepository.getById(rideId);
     if (!ride) throw new Error("Ride does not exist");
     const passenger = await this.accountRepository.getById(ride.passengerId);
+    if (!passenger) throw new Error("Passenger does not exist");
     return {
-      rideId: ride.rideId,
       passengerId: ride.passengerId,
-      date: ride.date,
-      status: ride.getStatus(),
-      toLat: ride.getToLat(),
-      toLong: ride.getToLong(),
+      driverId: ride.getDriverId(),
+      rideId: ride.rideId,
       fromLat: ride.getFromLat(),
       fromLong: ride.getFromLong(),
-      passengerName: passenger!.getName(),
+      toLat: ride.getToLat(),
+      toLong: ride.getToLong(),
+      status: ride.getStatus(),
+      lastLat: ride.getLastLat(),
+      lastLong: ride.getLastLong(),
+      distance: ride.getDistance(),
+      date: ride.date,
+      passengerName: passenger.getName(),
     };
   }
 }
 
 interface GetRideOutput {
   passengerId: string;
+  driverId?: string;
   rideId: string;
   fromLat: number;
   fromLong: number;
   toLat: number;
   toLong: number;
   status: string;
+  lastLat: number;
+  lastLong: number;
+  distance: number;
   date: Date;
   passengerName: string;
 }

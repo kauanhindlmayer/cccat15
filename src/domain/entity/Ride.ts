@@ -1,9 +1,11 @@
 import crypto from "crypto";
 import Coordinate from "../valueObject/Coordinate";
+import DistanceCalculator from "../services/DistanceCalculator";
 
 export default class Ride {
   private from: Coordinate;
   private to: Coordinate;
+  private lastPosition: Coordinate;
 
   constructor(
     readonly rideId: string,
@@ -14,10 +16,14 @@ export default class Ride {
     toLong: number,
     private status: string,
     readonly date: Date,
+    lastLat: number,
+    lastLong: number,
+    private distance: number,
     private driverId?: string
   ) {
     this.from = new Coordinate(fromLat, fromLong);
     this.to = new Coordinate(toLat, toLong);
+    this.lastPosition = new Coordinate(lastLat, lastLong);
   }
 
   static create(
@@ -38,7 +44,10 @@ export default class Ride {
       toLat,
       toLong,
       status,
-      date
+      date,
+      fromLat,
+      fromLong,
+      0
     );
   }
 
@@ -51,6 +60,9 @@ export default class Ride {
     toLong: number,
     status: string,
     date: Date,
+    lastLat: number,
+    lastLong: number,
+    distance: number,
     driverId?: string
   ) {
     return new Ride(
@@ -62,6 +74,9 @@ export default class Ride {
       toLong,
       status,
       date,
+      lastLat,
+      lastLong,
+      distance,
       driverId
     );
   }
@@ -87,6 +102,17 @@ export default class Ride {
     this.status = "in_progress";
   }
 
+  updatePosition(lat: number, long: number) {
+    if (this.status !== "in_progress")
+      throw new Error("Ride is not in the in_progress status");
+    const newLastPosition = new Coordinate(lat, long);
+    this.distance += DistanceCalculator.calculate(
+      this.lastPosition,
+      newLastPosition
+    );
+    this.lastPosition = newLastPosition;
+  }
+
   getFromLat() {
     return this.from.getLat();
   }
@@ -101,5 +127,17 @@ export default class Ride {
 
   getToLong() {
     return this.to.getLong();
+  }
+
+  getDistance() {
+    return this.distance;
+  }
+
+  getLastLat() {
+    return this.lastPosition.getLat();
+  }
+
+  getLastLong() {
+    return this.lastPosition.getLong();
   }
 }

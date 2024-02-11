@@ -14,7 +14,7 @@ export default class RideRepository implements IRideRepository {
 
   async save(ride: any): Promise<any> {
     await this.connection.query(
-      "insert into cccat15.ride (ride_id, passenger_id, from_lat, from_long, to_lat, to_long, status, date) values ($1, $2, $3, $4, $5, $6, $7, $8)",
+      "insert into cccat15.ride (ride_id, passenger_id, from_lat, from_long, to_lat, to_long, status, date, last_lat, last_long, distance) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
       [
         ride.rideId,
         ride.passengerId,
@@ -22,8 +22,11 @@ export default class RideRepository implements IRideRepository {
         ride.getFromLong(),
         ride.getToLat(),
         ride.getToLong(),
-        ride.status,
+        ride.getStatus(),
         ride.date,
+        ride.getLastLat(),
+        ride.getLastLong(),
+        ride.getDistance(),
       ]
     );
   }
@@ -45,6 +48,9 @@ export default class RideRepository implements IRideRepository {
           parseFloat(ride.to_long),
           ride.status,
           ride.date,
+          parseFloat(ride.last_lat),
+          parseFloat(ride.last_long),
+          parseFloat(ride.distance),
           ride.driver_id
         )
       );
@@ -67,6 +73,9 @@ export default class RideRepository implements IRideRepository {
         parseFloat(ride.to_long),
         ride.status,
         ride.date,
+        parseFloat(ride.last_lat),
+        parseFloat(ride.last_long),
+        parseFloat(ride.distance),
         ride.driver_id
       );
     });
@@ -87,6 +96,9 @@ export default class RideRepository implements IRideRepository {
       parseFloat(ride.to_long),
       ride.status,
       ride.date,
+      parseFloat(ride.last_lat),
+      parseFloat(ride.last_long),
+      parseFloat(ride.distance),
       ride.driver_id
     );
   }
