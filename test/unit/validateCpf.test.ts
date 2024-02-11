@@ -10,6 +10,6 @@ test.each(["97456321558", "71428793860", "87748248800"])(
 test.each(["", undefined, null, "11111111111", "111", "11111111111111"])(
   "Should throw an error for invalid cpf: %s",
   async (cpf: any) => {
-    expect(() => new Cpf(cpf)).toThrow("Invalid cpf");
+    expect(() => new Cpf(cpf)).toThrow(new Error("Invalid cpf"));
   }
 );

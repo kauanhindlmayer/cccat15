@@ -26,12 +26,12 @@ test("should get an account by id if it exists", async () => {
   const result = await signup.execute(input);
   const account = await getAccount.execute(result.accountId);
   expect(account).toBeDefined();
-  expect(account.getName()).toBe(input.name);
-  expect(account.getEmail()).toBe(input.email);
-  expect(account.getCpf()).toBe(input.cpf);
+  expect(account.name).toBe(input.name);
+  expect(account.email).toBe(input.email);
+  expect(account.cpf).toBe(input.cpf);
   expect(account.isPassenger).toBe(true);
   expect(account.isDriver).toBe(false);
-  expect(account.getCarPlate()).toBeUndefined();
+  expect(account.carPlate).toBeUndefined();
 });
 
 test("should throw an error if account does not exist", async () => {

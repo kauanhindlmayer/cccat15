@@ -1,12 +1,14 @@
 import crypto from "crypto";
 import Name from "../valueObject/Name";
 import Email from "../valueObject/Email";
+import CarPlate from "../valueObject/CarPlate";
+import Cpf from "../valueObject/Cpf";
 
 export default class Account {
   private name: Name;
   private email: Email;
-  private cpf: string;
-  private carPlate?: string;
+  private cpf: Cpf;
+  private carPlate?: CarPlate;
 
   private constructor(
     readonly accountId: string,
@@ -19,9 +21,9 @@ export default class Account {
   ) {
     this.name = new Name(name);
     this.email = new Email(email);
-    this.cpf = cpf;
+    this.cpf = new Cpf(cpf);
     if (isDriver && carPlate) {
-      this.carPlate = carPlate;
+      this.carPlate = new CarPlate(carPlate);
     }
   }
 
@@ -80,10 +82,10 @@ export default class Account {
   }
 
   public getCpf(): string {
-    return this.cpf;
+    return this.cpf.getValue();
   }
 
   public getCarPlate(): string | undefined {
-    return this.carPlate;
+    return this.carPlate?.getValue();
   }
 }

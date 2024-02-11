@@ -10,7 +10,6 @@ test("should create an account on route /signup", async () => {
     isPassenger: true,
   };
   const response = await axios.post(`${baseUrl}/signup`, input);
-  console.log(response.data);
   expect(response.status).toBe(200);
   expect(response.data.accountId).toBeDefined();
 });
@@ -31,7 +30,7 @@ test("should get an account on route /account/:accountId", async () => {
   expect(response.data.cpf).toBe(input.cpf);
   expect(response.data.isPassenger).toBe(true);
   expect(response.data.isDriver).toBe(false);
-  expect(response.data.carPlate).toBeNull();
+  expect(response.data.carPlate).toBeUndefined();
 });
 
 test("should create a ride on route /solicitate-ride", async () => {
