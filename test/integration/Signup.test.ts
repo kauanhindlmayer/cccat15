@@ -1,6 +1,8 @@
 import GetAccount from "../../src/application/useCase/GetAccount";
 import Signup from "../../src/application/useCase/Signup";
-import AccountRepository from "../../src/infrastructure/repository/AccountRepository";
+import AccountRepository, {
+  AccountRepositoryORM,
+} from "../../src/infrastructure/repository/AccountRepository";
 import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
 import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConnection";
 
@@ -10,7 +12,7 @@ let getAccount: GetAccount;
 
 beforeEach(() => {
   connection = new PgPromiseAdapter();
-  const accountRepository = new AccountRepository(connection);
+  const accountRepository = new AccountRepositoryORM(connection);
   signup = new Signup(accountRepository);
   getAccount = new GetAccount(accountRepository);
 });
