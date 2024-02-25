@@ -17,9 +17,9 @@ export default class ExpressAdapter implements IHttpServer {
     this.app[method](url, async (req: any, res: any) => {
       try {
         const result = await callback(req.params, req.body);
-        res.status(200).send(result);
+        res.json(result);
       } catch (e: any) {
-        res.status(400).send({ message: e.message });
+        res.status(400).json({ message: e.message });
       }
     });
   }

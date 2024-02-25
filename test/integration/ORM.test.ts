@@ -36,10 +36,11 @@ test("should test ORM", async () => {
 test("should test ORM with real aggregate", async () => {
   // Given
   const accountId = crypto.randomUUID();
-  const account = Account.create(
+  const account = Account.restore(
+    accountId,
     "John Doe",
-    "john.doe@gmail.com",
-    "111.111.111-11",
+    `john.doe${Math.random()}@email.com`,
+    "968.896.412-30",
     true,
     false,
     ""
@@ -55,9 +56,9 @@ test("should test ORM with real aggregate", async () => {
     "account_id",
     accountId
   );
-  expect(savedAccountModel.name).toEqual("John Doe");
-  expect(savedAccountModel.email).toEqual("john.doe@gmail.com");
-  expect(savedAccountModel.cpf).toEqual("111.111.111-11");
-  expect(savedAccountModel.carPlate).toEqual("");
+  expect(savedAccountModel.name).toEqual(accountModel.name);
+  expect(savedAccountModel.email).toEqual(accountModel.email);
+  expect(savedAccountModel.cpf).toEqual(accountModel.cpf);
+  expect(savedAccountModel.carPlate).toEqual(accountModel.carPlate);
   await connection.close();
 });

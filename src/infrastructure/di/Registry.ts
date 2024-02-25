@@ -27,7 +27,7 @@ export function resolve(name: string) {
     target[propertyKey] = new Proxy(
       {},
       {
-        get: () => {
+        get: (target: any, propertyKey: string) => {
           const dependency = Registry.getInstance().resolve(name);
           return dependency[propertyKey];
         },

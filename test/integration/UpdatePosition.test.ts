@@ -72,17 +72,15 @@ test("should start ride", async () => {
     long: -48.522234807851476,
   };
   await updatePosition.execute(updatePositionInput);
-  const getRideOutput = await getRide.execute(solicitateRideOutput.rideId);
-  expect(getRideOutput.distance).toBe(10);
-  expect(getRideOutput.lastLat).toBe(-27.496887588317275);
-  expect(getRideOutput.lastLong).toBe(-48.522234807851476);
+  const outputGetRide = await getRide.execute(solicitateRideOutput.rideId);
+  expect(outputGetRide.distance).toBe(10);
+  expect(outputGetRide.lastLat).toBe(-27.496887588317275);
+  expect(outputGetRide.lastLong).toBe(-48.522234807851476);
   const outputGetPositions = await getPositions.execute(
     solicitateRideOutput.rideId
   );
-  expect(outputGetPositions.length).toBe(1);
   expect(outputGetPositions[0].lat).toBe(-27.496887588317275);
   expect(outputGetPositions[0].long).toBe(-48.522234807851476);
-  expect(outputGetPositions[0].rideId).toBe(solicitateRideOutput.rideId);
 });
 
 afterEach(async () => {

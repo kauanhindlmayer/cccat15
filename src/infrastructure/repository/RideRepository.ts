@@ -71,8 +71,15 @@ export default class RideRepository implements IRideRepository {
 
   async update(ride: Ride): Promise<void> {
     await this.connection.query(
-      "update cccat15.ride set status = $1, driver_id = $2 where ride_id = $3",
-      [ride.getStatus(), ride.getDriverId(), ride.rideId]
+      "update cccat15.ride set status = $1, driver_id = $2, last_lat = $3, last_long = $4, distance = $5 where ride_id = $6",
+      [
+        ride.getStatus(),
+        ride.getDriverId(),
+        ride.getLastLat(),
+        ride.getLastLong(),
+        ride.getDistance(),
+        ride.rideId,
+      ]
     );
   }
 }

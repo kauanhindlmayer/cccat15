@@ -18,6 +18,7 @@ export default class ORM {
   async findBy(model: any, field: string, value: string) {
     const query = `select * from ${model.prototype.schema}.${model.prototype.table} where ${field} = $1`;
     const [data] = await this.connection.query(query, [value]);
+    if (!data) return;
     const obj = new model();
     for (const column of model.prototype.columns) {
       obj[column.property] = data[column.column];
