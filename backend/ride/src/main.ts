@@ -1,0 +1,20 @@
+import RideRepository from "./infrastructure/repository/RideRepository";
+import SolicitateRide from "./application/useCase/SolicitateRide";
+import GetRide from "./application/useCase/GetRide";
+import PgPromiseAdapter from "./infrastructure/database/DatabaseConnection";
+import ExpressAdapter from "./infrastructure/http/HttpServer";
+import MainController from "./infrastructure/http/MainController";
+import Registry from "./infrastructure/di/Registry";
+import AccountGatewayHttp from "./infrastructure/gateway/AccountGatewayHttp";
+
+const httpServer = new ExpressAdapter();
+const connection = new PgPromiseAdapter();
+const rideRepository = new RideRepository(connection);
+const accountGateway = new AccountGatewayHttp();
+const solicitateRide = new SolicitateRide(rideRepository, accountGateway);
+const getRide = new GetRide(rideRepository, accountGateway);
+const registry = Registry.getInstance();
+registry.register("solicitateRide", solicitateRide);
+registry.register("getRide", getRide);
+new MainController(httpServer);
+httpServer.listen(3000);
