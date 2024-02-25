@@ -2,6 +2,7 @@ import crypto from "crypto";
 import PgPromiseAdapter from "../../src/infrastructure/database/DatabaseConnection";
 import AccountModel from "../../src/infrastructure/orm/AccountModel";
 import ORM from "../../src/infrastructure/orm/ORM";
+import Account from "../../src/domain/entity/Account";
 
 test("should test ORM", async () => {
   // Given
@@ -15,9 +16,9 @@ test("should test ORM", async () => {
     true,
     false
   );
+  // When
   const connection = new PgPromiseAdapter();
   const orm = new ORM(connection);
-  // When
   await orm.save(accountModel);
   // Then
   const savedAccountModel = await orm.findBy(
@@ -35,18 +36,18 @@ test("should test ORM", async () => {
 test("should test ORM with real aggregate", async () => {
   // Given
   const accountId = crypto.randomUUID();
-  const accountModel = new AccountModel(
-    accountId,
+  const account = Account.create(
     "John Doe",
     "john.doe@gmail.com",
     "111.111.111-11",
-    "",
     true,
-    false
+    false,
+    ""
   );
+  const accountModel = AccountModel.fromAggregate(account);
+  // When
   const connection = new PgPromiseAdapter();
   const orm = new ORM(connection);
-  // When
   await orm.save(accountModel);
   // Then
   const savedAccountModel = await orm.findBy(

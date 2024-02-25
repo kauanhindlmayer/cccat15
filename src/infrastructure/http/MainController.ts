@@ -3,18 +3,22 @@ import GetAccount from "../../application/useCase/GetAccount";
 import GetRide from "../../application/useCase/GetRide";
 import IHttpServer from "./HttpServer";
 import Signup from "../../application/useCase/Signup";
+import { resolve } from "../di/Registry";
 
 // Interface Adapter
 export default class MainController {
-  constructor(
-    httpServer: IHttpServer,
-    signup: Signup,
-    getAccount: GetAccount,
-    solicitateRide: SolicitateRide,
-    getRide: GetRide
-  ) {
+  @resolve("signup")
+  signup?: Signup;
+  @resolve("getAccount")
+  getAccount?: GetAccount;
+  @resolve("solicitateRide")
+  solicitateRide?: SolicitateRide;
+  @resolve("getRide")
+  getRide?: GetRide;
+
+  constructor(httpServer: IHttpServer) {
     httpServer.register("post", "/signup", async (params: any, body: any) => {
-      const result = await signup.execute(body);
+      const result = await this.signup?.execute(body);
       return result;
     });
 
@@ -22,7 +26,7 @@ export default class MainController {
       "get",
       "/account/:accountId",
       async (params: any, body: any) => {
-        const result = await getAccount.execute(params.accountId);
+        const result = await this.getAccount?.execute(params.accountId);
         return result;
       }
     );
@@ -31,7 +35,7 @@ export default class MainController {
       "post",
       "/solicitate-ride",
       async (params: any, body: any) => {
-        const result = await solicitateRide.execute(body);
+        const result = await this.solicitateRide?.execute(body);
         return result;
       }
     );
@@ -40,7 +44,7 @@ export default class MainController {
       "get",
       "/ride/:rideId",
       async (params: any, body: any) => {
-        const result = await getRide.execute(params.rideId);
+        const result = await this.getRide?.execute(params.rideId);
         return result;
       }
     );
