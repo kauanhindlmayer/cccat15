@@ -14,7 +14,7 @@ export default class RideRepository implements IRideRepository {
 
   async save(ride: any): Promise<any> {
     await this.connection.query(
-      "insert into cccat15.ride (ride_id, passenger_id, from_lat, from_long, to_lat, to_long, status, date, last_lat, last_long, distance) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)",
+      "insert into cccat15.ride (ride_id, passenger_id, from_lat, from_long, to_lat, to_long, status, date, last_lat, last_long, distance, fare) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)",
       [
         ride.rideId,
         ride.passengerId,
@@ -27,6 +27,7 @@ export default class RideRepository implements IRideRepository {
         ride.getLastLat(),
         ride.getLastLong(),
         ride.getDistance(),
+        ride.getFare(),
       ]
     );
   }
@@ -65,19 +66,21 @@ export default class RideRepository implements IRideRepository {
       parseFloat(ride.last_lat),
       parseFloat(ride.last_long),
       parseFloat(ride.distance),
+      parseFloat(ride.fare),
       ride.driver_id
     );
   }
 
   async update(ride: Ride): Promise<void> {
     await this.connection.query(
-      "update cccat15.ride set status = $1, driver_id = $2, last_lat = $3, last_long = $4, distance = $5 where ride_id = $6",
+      "update cccat15.ride set status = $1, driver_id = $2, last_lat = $3, last_long = $4, distance = $5, fare = $6 where ride_id = $7",
       [
         ride.getStatus(),
         ride.getDriverId(),
         ride.getLastLat(),
         ride.getLastLong(),
         ride.getDistance(),
+        ride.getFare(),
         ride.rideId,
       ]
     );

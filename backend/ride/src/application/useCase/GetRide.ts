@@ -28,6 +28,7 @@ export default class GetRide {
       distance: ride.getDistance(),
       date: ride.date,
       passengerName: passenger.name,
+      fare: ride.getFare(),
     };
   }
 }
@@ -46,4 +47,5 @@ interface GetRideOutput {
   distance: number;
   date: Date;
   passengerName: string;
+  fare: number;
 }

@@ -1,6 +1,7 @@
 import crypto from "crypto";
 import Coordinate from "../valueObject/Coordinate";
 import DistanceCalculator from "../services/DistanceCalculator";
+import FareCalculatorFactory from "../services/FareCalculator";
 
 // Aggregate (Ride<AR>, Coordinate, Coordinate, Coordinate)
 export default class Ride {
@@ -20,6 +21,7 @@ export default class Ride {
     lastLat: number,
     lastLong: number,
     private distance: number,
+    private fare: number,
     private driverId?: string
   ) {
     this.from = new Coordinate(fromLat, fromLong);
@@ -48,6 +50,7 @@ export default class Ride {
       date,
       fromLat,
       fromLong,
+      0,
       0
     );
   }
@@ -64,6 +67,7 @@ export default class Ride {
     lastLat: number,
     lastLong: number,
     distance: number,
+    fare: number,
     driverId?: string
   ) {
     return new Ride(
@@ -78,6 +82,7 @@ export default class Ride {
       lastLat,
       lastLong,
       distance,
+      fare,
       driverId
     );
   }
@@ -114,6 +119,15 @@ export default class Ride {
     this.lastPosition = newLastPosition;
   }
 
+  finish() {
+    if (this.status !== "in_progress")
+      throw new Error("Ride is not in the in_progress status");
+    this.status = "completed";
+    this.fare = FareCalculatorFactory.create(this.date).calculate(
+      this.distance
+    );
+  }
+
   getFromLat() {
     return this.from.getLat();
   }
@@ -140,5 +154,9 @@ export default class Ride {
 
   getLastLong() {
     return this.lastPosition.getLong();
+  }
+
+  getFare() {
+    return this.fare;
   }
 }
