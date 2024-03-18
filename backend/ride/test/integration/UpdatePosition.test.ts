@@ -10,6 +10,7 @@ import PositionRepository from "../../src/infrastructure/repository/PositionRepo
 import GetPositions from "../../src/application/useCase/GetPositions";
 import IAccountGateway from "../../src/application/gateway/AccountGateway";
 import AccountGatewayHttp from "../../src/infrastructure/gateway/AccountGatewayHttp";
+import AxiosAdapter from "../../src/infrastructure/http/HttpClient";
 
 let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
@@ -22,7 +23,7 @@ let getPositions: GetPositions;
 
 beforeEach(() => {
   connection = new PgPromiseAdapter();
-  accountGateway = new AccountGatewayHttp();
+  accountGateway = new AccountGatewayHttp(new AxiosAdapter());
   const rideRepository = new RideRepository(connection);
   const positionRepository = new PositionRepository(connection);
   solicitateRide = new SolicitateRide(rideRepository, accountGateway);

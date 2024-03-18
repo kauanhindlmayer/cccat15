@@ -1,16 +1,17 @@
 import IAccountGateway from "../../application/gateway/AccountGateway";
-import axios from "axios";
+import IHttpClient from "../http/HttpClient";
 
+// Interface Adapter
 export default class AccountGatewayHttp implements IAccountGateway {
+  constructor(readonly httpClient: IHttpClient) {}
+
   async getById(accountId: string): Promise<any> {
-    const response = await axios.get(
+    return await this.httpClient.get(
       `http://localhost:3001/account/${accountId}`
     );
-    return response.data;
   }
 
   async signup(input: any): Promise<any> {
-    const response = await axios.post("http://localhost:3001/signup", input);
-    return response.data;
+    return await this.httpClient.post("http://localhost:3001/signup", input);
   }
 }

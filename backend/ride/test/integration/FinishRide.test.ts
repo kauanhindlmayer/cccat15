@@ -12,6 +12,7 @@ import IAccountGateway from "../../src/application/gateway/AccountGateway";
 import AccountGatewayHttp from "../../src/infrastructure/gateway/AccountGatewayHttp";
 import FinishRide from "../../src/application/useCase/FinishRide";
 import sinon from "sinon";
+import AxiosAdapter from "../../src/infrastructure/http/HttpClient";
 
 let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
@@ -25,7 +26,7 @@ let finishRide: FinishRide;
 
 beforeEach(() => {
   connection = new PgPromiseAdapter();
-  accountGateway = new AccountGatewayHttp();
+  accountGateway = new AccountGatewayHttp(new AxiosAdapter());
   const rideRepository = new RideRepository(connection);
   const positionRepository = new PositionRepository(connection);
   solicitateRide = new SolicitateRide(rideRepository, accountGateway);
