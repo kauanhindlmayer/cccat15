@@ -2,6 +2,7 @@ import GetAccount from "../../application/useCase/GetAccount";
 import IHttpServer from "./HttpServer";
 import Signup from "../../application/useCase/Signup";
 import { resolve } from "../di/Registry";
+import Queue from "../queue/Queue";
 
 // Interface Adapter
 export default class MainController {
@@ -9,12 +10,23 @@ export default class MainController {
   signup?: Signup;
   @resolve("getAccount")
   getAccount?: GetAccount;
+  @resolve("queue")
+  queue?: Queue;
 
   constructor(httpServer: IHttpServer) {
     httpServer.register("post", "/signup", async (params: any, body: any) => {
       const result = await this.signup?.execute(body);
       return result;
     });
+
+    // Command
+    httpServer.register(
+      "post",
+      "/signup-async",
+      async (params: any, body: any) => {
+        this.queue?.publish("signup", body);
+      }
+    );
 
     httpServer.register(
       "get",

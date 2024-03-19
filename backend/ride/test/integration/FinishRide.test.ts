@@ -13,6 +13,9 @@ import AccountGatewayHttp from "../../src/infrastructure/gateway/AccountGatewayH
 import FinishRide from "../../src/application/useCase/FinishRide";
 import sinon from "sinon";
 import AxiosAdapter from "../../src/infrastructure/http/HttpClient";
+import ProcessPayment from "../../src/application/useCase/ProcessPayment";
+import Mediator from "../../src/infrastructure/mediator/Mediator";
+import { RabbitMQAdapter } from "../../src/infrastructure/queue/Queue";
 
 let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
@@ -24,7 +27,7 @@ let updatePosition: UpdatePosition;
 let getPositions: GetPositions;
 let finishRide: FinishRide;
 
-beforeEach(() => {
+beforeEach(async () => {
   connection = new PgPromiseAdapter();
   accountGateway = new AccountGatewayHttp(new AxiosAdapter());
   const rideRepository = new RideRepository(connection);
@@ -35,7 +38,14 @@ beforeEach(() => {
   startRide = new StartRide(rideRepository);
   updatePosition = new UpdatePosition(rideRepository, positionRepository);
   getPositions = new GetPositions(positionRepository);
-  finishRide = new FinishRide(rideRepository);
+  const processPayment = new ProcessPayment(rideRepository);
+  const mediator = new Mediator();
+  mediator.register("ride:finished", async (data: any) => {
+    await processPayment.execute(data.rideId);
+  });
+  const queue = new RabbitMQAdapter();
+  await queue.connect();
+  finishRide = new FinishRide(rideRepository, queue);
 });
 
 test("should finish ride on normal hours", async () => {
