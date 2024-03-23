@@ -2,9 +2,11 @@ import crypto from "crypto";
 import Coordinate from "../valueObject/Coordinate";
 import DistanceCalculator from "../services/DistanceCalculator";
 import FareCalculatorFactory from "../services/FareCalculator";
+import RideFinishedEvent from "../event/RideFinishedEvent";
+import AggregateRoot from "./AggregateRoot";
 
 // Aggregate (Ride<AR>, Coordinate, Coordinate, Coordinate)
-export default class Ride {
+export default class Ride extends AggregateRoot {
   private from: Coordinate;
   private to: Coordinate;
   private lastPosition: Coordinate;
@@ -24,6 +26,7 @@ export default class Ride {
     private fare: number,
     private driverId?: string
   ) {
+    super();
     this.from = new Coordinate(fromLat, fromLong);
     this.to = new Coordinate(toLat, toLong);
     this.lastPosition = new Coordinate(lastLat, lastLong);
@@ -126,6 +129,8 @@ export default class Ride {
     this.fare = FareCalculatorFactory.create(this.date).calculate(
       this.distance
     );
+    const event = new RideFinishedEvent(this.rideId, "token", this.getFare());
+    this.notify(event);
   }
 
   getFromLat() {
