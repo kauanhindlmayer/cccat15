@@ -1,5 +1,4 @@
 import DomainEvent from "../../domain/event/DomainEvent";
-import RideFinishedEvent from "../../domain/event/RideFinishedEvent";
 // import Mediator from "../../infrastructure/mediator/Mediator";
 import Queue from "../../infrastructure/queue/Queue";
 import IRideRepository from "../../infrastructure/repository/RideRepository";
