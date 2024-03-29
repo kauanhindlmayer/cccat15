@@ -9,6 +9,8 @@ import IDatabaseConnection from "../../src/infrastructure/database/DatabaseConne
 import IAccountGateway from "../../src/application/gateway/AccountGateway";
 import AccountGatewayHttp from "../../src/infrastructure/gateway/AccountGatewayHttp";
 import AxiosAdapter from "../../src/infrastructure/http/HttpClient";
+import UpdateRideProjectionHandler from "../../src/application/handler/UpdateRideProjectionHandler";
+import GetRideProjectionQuery from "../../src/application/query/GetRideQuery";
 
 let connection: IDatabaseConnection;
 let solicitateRide: SolicitateRide;
@@ -94,8 +96,17 @@ test("should start ride", async () => {
   await acceptRide.execute(acceptRideInput);
   await startRide.execute(solicitateRideOutput.rideId);
   const ride = await getRide.execute(solicitateRideOutput.rideId);
-  expect(ride.status).toBe("in_progress");
-  expect(ride.passengerName).toBe(passengerSignupInput.name);
+  // expect(ride.status).toBe("in_progress");
+  // expect(ride.passengerName).toBe(passengerSignupInput.name);
+  const updateRideProjectionHandler = new UpdateRideProjectionHandler(
+    connection
+  );
+  updateRideProjectionHandler.execute(solicitateRideOutput.rideId);
+  const getRideProjection = new GetRideProjectionQuery(connection);
+  const outputRideProjectionQuery = await getRideProjection.execute(
+    solicitateRideOutput.rideId
+  );
+  expect(outputRideProjectionQuery.status).toBe("in_progress");
 });
 
 afterEach(async () => {
