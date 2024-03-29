@@ -1,8 +1,9 @@
 import IRideRepository from "../../infrastructure/repository/RideRepository";
 import Ride from "../../domain/entity/Ride";
 import IAccountGateway from "../gateway/AccountGateway";
+import IUsecase from "./IUsecase";
 
-export default class SolicitateRide {
+export default class SolicitateRide implements IUsecase {
   constructor(
     readonly rideRepository: IRideRepository,
     readonly accountGateway: IAccountGateway
